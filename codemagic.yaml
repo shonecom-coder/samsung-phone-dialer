@@ -1,0 +1,26 @@
+workflows:
+  android-release:
+    name: Android Release Build
+    instance_type: mac_mini_m1
+    max_build_duration: 120
+    environment:
+      java: 17
+      ndk: 25.1.8937393
+    triggering:
+      events:
+        - push
+        - tag
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+      - name: Build web assets
+        script: |
+          npm run build
+      - name: Build Android APK
+        script: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew clean assembleRelease
+    artifacts:
+      - android/app/build/outputs/apk/release/app-release.apk
